@@ -69,7 +69,7 @@ module.exports = {
   plugins: [ // 对应的插件
 
 
-    // new ExtractTextWebpackPlugin('./css/index.css'),// 将所有的css样式抽离到index.css 文件中
+    // new ExtractTextWebpackPlugin('./css/index.css'),// 将所有的css样式抽离到index.css 文件中，备注：如果使用了css抽离功能，css-loader内置的热更新功能将会失效（原因是css抽离之后进入到了html中），解决方案在webpacke2文件项目中############
     extractCss,
     extractLess,
 
