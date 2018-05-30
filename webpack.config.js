@@ -106,7 +106,7 @@ module.exports = {
     host: 'localhost',
     port: 3000, // 默认是8080   如果端口被占用会 ++port
     open: true, // 启动服务，在浏览器自动打开
-    hot: true,// 默认自动刷新，热更新， 还需配置一个HotModuleReplacementPlugin插件（webpack 自带的）
+    hot: true,// 默认自动刷新，热更新， 还需配置一个HotModuleReplacementPlugin插件（webpack 自带的）,这样也只是能实现css的热更新（因为css-loader 自带这个功能）,实现js的热更新需要在 js文件中加入 module.hot.accept();
   },
 
 
