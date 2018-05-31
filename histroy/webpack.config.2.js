@@ -14,26 +14,6 @@ module.exports = {
     b: './src/index.js',
     a: './src/a.js'
   },
-
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        vendor: { // 抽离第三方插件（多个业务文件，多次引入同一个插件，打包时会打包出多份同样的文件，抽离出来公用一份）
-          test: /node_modules/,
-          chunks: "initial",
-          name: "vendor", //抽离出来的文件名
-          proiory: 10// 优先级
-        },
-        commons:{ // 抽离自定义的公共文件，先抽离第三方库的插件，因为第三方库的proiory比较高
-          chunks:'initial',
-          name:'commons',
-          minSize:0 // 只要超出0字节，就抽出，（防止文件小不进行抽离）
-        }
-
-      }
-    }
-  },
-
   output: {
     filename: "[name].[hash:8].js", //name 对应的是entry 对象的key（配置多入口多出口）  ------ hash取一个md5戳截取前8位添加到文件名，解决缓存问题, 例如：bundle.3aa634e3.js
 
@@ -45,6 +25,17 @@ module.exports = {
     // 抽离样式文件，抽离出以link标签形式引入到文件-----------插件：extract-text-webpack-plugin@next  (不能使用当前版本，当前版本只是支持webpack3)
 
     rules: [
+
+      //--- 将jquery 暴露给全局，一个文件中引入了，其他文件都可以用（不需要每个文件都引用全局变量），配合webpack.ProvidePlugin插件使用，
+      // --- 这种使用方法被另一种方法代替，optimization{} 抽离公共代码的功能，
+      // { 
+      //   test:/jquery/,
+      //   use:[{
+      //     loader:'expose-loader',
+      //     options:'$'
+      //   }]
+      // },
+
 
       // 方法一： 会抽离成一个样式文件，然后以link的形式引入到页面文件
       // {
@@ -88,6 +79,13 @@ module.exports = {
   },
 
   plugins: [ // 对应的插件
+
+    // 提供全局变量插件，引入全局变量的文件可以使用，没有引用的不可以使用。
+    new webpack.ProvidePlugin({
+      $: 'jquery'
+    }),
+
+
     // new ExtractTextWebpackPlugin('./css/index.css'),// 将所有的css样式抽离到index.css 文件中，备注：如果使用了css抽离功能，css-loader内置的热更新功能将会失效（原因是css抽离之后进入到了html中），解决方案在webpacke2文件项目中############
     extractCss,
     extractLess,
@@ -100,7 +98,7 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       filename: 'a.html',// 如果是多文件入口，和多文件出口，就要给文件定义名字，不能使用默认值
-      chunks: ["vendor", 'a'], // a是对应的打包完成的js，vendor 是抽离出来的第三方公共模块
+      chunks: ['a'], // 对应的打包完成的js
       template: './src/index.html',// 用哪个html做的模板，会将打包好的js引入到以这个模板新创建的文件
       hash: true,// 解决缓存文件，让引用的文件后面加上 ?XXXXX   md5戳 例如：<script type=text/javascript src=bundle.js?7574113d7966dcb22a78></script>，
       minify: {  // 压缩
@@ -110,7 +108,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'b.html',
-      chunks: ["vendor", 'b'],
+      chunks: ['b'],
       template: './src/index.html',
       hash: true,
       minify: {

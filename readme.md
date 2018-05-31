@@ -40,3 +40,10 @@ npm install webpack webpack-cli -D   (开发用)
 - npm install postcss-loader autoprefixer -D   给css加前缀，达到各个浏览器内核兼容
 
 - npm install purifycss-webpack purify-css glob -D    glob 插件是为了全局搜索   purifycss-webpack 删除多余未用的css less样式，依赖于purify-css插件
+
+
+## 提供全局变量插件 --- 比如使用jquery
+- ProvidePlugin 会把使用到这个变量的文件都注入 jquery (多个文件使用此变量，就会每个文件注入一次，这样的化很消耗性能)
+
+##
+- npm install expose-loader -D
